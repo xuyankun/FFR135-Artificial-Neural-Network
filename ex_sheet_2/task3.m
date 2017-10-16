@@ -3,8 +3,10 @@ clear;clc;clf;close all
 data = importdata('data_ex2_task3_2017.txt');
 runs = 20;
 
-k=10; % k=4 for 3a , k=10 for 3b
+k=4; % k=4 for 3a , k=10 for 3b , comment out for 3c
 
+% class_10 = zeros(10,1); % delete '%' when run 3c
+% for k=1:10 % delete '%' when run 3c
 class_error_runs = zeros(runs,1);
 weights_unsup_runs = zeros(2*runs,k);
 weights_sup_runs = zeros(k,runs);
@@ -38,15 +40,15 @@ for r = 1:runs
         weights_unsupervised(:,index_win_unit) = weights_unsupervised(:,index_win_unit) + delta_win_weights;
     end
     weights_unsup_runs(2*(r-1)+1:r*2,:) = weights_unsupervised;
+    
     % supervised simple perceptron learning
-    
-    
+
     for s = 1:steps
         % feed pattern
         index_SGD = randi([1 size(data,1)]);
         feed_pattern = data(index_SGD,2:3)';
         feed_target = data(index_SGD,1);
-        perceptron_neurons = zeros(4,1);
+        perceptron_neurons = zeros(k,1);
         
         for j = 1:k
             perceptron_neurons(j) = exp(- norm(feed_pattern - weights_unsupervised(:,j))^2 /2 );
@@ -80,7 +82,8 @@ for r = 1:runs
     end
     class_error_runs(r) = num_error / size(data,1) ;
 end
-
+%     class_10(k) = mean(class_error_runs);  % delete '%' when run 3c
+% end  % delete '%' when run 3c
 
 %% decision boundary
 best_index = find(class_error_runs == min(class_error_runs));
@@ -89,7 +92,7 @@ best_unsup_weights = weights_unsup_runs((best_index-1)*2+1:2*best_index,:);
 best_sup_weights = weights_sup_runs(:,best_index);
 best_bias = bias_runs(best_index);
 
-num_points = 100;
+num_points = 200;
 [X,Y] = meshgrid(linspace(-15,25,num_points),linspace(-10,15,num_points));
 decision1 = [];
 decision2 = [];
@@ -110,23 +113,35 @@ for x = 1:num_points
     end    
 end
 
-%% plot
+%% plot 3a and 3b
 class1 = data(data(:,1) == 1, 2:3);
 class2 = data(data(:,1) == -1, 2:3);
 figure(1); hold on
-plot(decision1(:,1),decision1(:,2),'g*','Linewidth',10)
-plot(decision2(:,1),decision2(:,2),'y*','Linewidth',10)
+plot(decision1(:,1),decision1(:,2),'g*','Linewidth',5)
+plot(decision2(:,1),decision2(:,2),'y*','Linewidth',5)
 plot(class1(:,1), class1(:,2), 'ro','Linewidth',1.5);
 plot(class2(:,1), class2(:,2), 'bx','Linewidth',1.5);
-title('Data plot with decision boundary when k=10','FontSize',18)
+for i = 1:k
+quiver(0,0,weights_unsupervised(1,i),weights_unsupervised(2,i),'k','Linewidth',2,'MaxHeadSize',1)
+end
+title('Data plot with decision boundary when k=4','FontSize',18) 
 xlabel('$\xi_1$','Interpreter','latex','FontSize',14)
 ylabel('$\xi_2$','Interpreter','latex','FontSize',14)
 legend('Decision boundary of class = 1','Decision boundary of class = -1',...
-    'Data of class = 1','Data of class = -1','Location','northeast')
+    'Data of class = 1','Data of class = -1','Weight vectors after unsupervised learning','Location','northeast')
 set(gca,'FontSize',15)
 
-
-
+%% plot 3c 
+% please set 3c code in the first part and run
+% then run this part independantly
+% figure;
+% plot(1:10,class_10,'-*','Linewidth',1.5)
+% xlabel('k','FontSize',14)
+% ylabel('Classification error','FontSize',14)
+% title('The classification error for each k','FontSize',18)
+% set(gca,'FontSize',15)
+% ylim([0,0.6])
+% xlim([1,10])
 
 
 

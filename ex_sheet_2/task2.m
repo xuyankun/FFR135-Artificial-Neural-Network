@@ -16,6 +16,7 @@ for t = 1:time
     weights_modulus(t) = norm(weights);
 end
 
+
 figure(1); hold on
 plot(1:time,weights_modulus,'Linewidth',2)
 
@@ -40,6 +41,7 @@ plot(1:time,weights_modulus,'Linewidth',2)
 xlabel('Time(Iterations)')
 ylabel('Modulus of weight vector')
 legend('Curve of original data','Curve of data with zero mean')
+title('Modulus of weight vector','FontSize',18)
 set(gca,'FontSize',15)
 
 figure(2); hold on
@@ -56,3 +58,4 @@ legend('Original data','Ending weight vector of oringinal data',...
 set(gca,'FontSize',15)
 xlim([-2,12])
 ylim([-1.5,3])
+
